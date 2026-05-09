@@ -115,14 +115,21 @@ namespace ChuyenTrangThai {
     }
 }
         
-    inline void bat_dau_chu_ky(ThongTinHeThong& tt) {
+inline void bat_dau_chu_ky(ThongTinHeThong& tt) {
+    // 1. Chạy pha dựa trên biến trạng thái hiện tại
     if (tt.luotTiepTheo_LaXanh) {
         sang_xanh(tt);
+        // Sau khi kích hoạt Xanh, chuẩn bị cho lượt tới là Đỏ
+        tt.luotTiepTheo_LaXanh = false; 
     } else {
         sang_do(tt);
+        // Sau khi kích hoạt Đỏ, chuẩn bị cho lượt tới là Xanh
+        tt.luotTiepTheo_LaXanh = true;
     }
-    // Reset về mặc định theo nodeId cho chu kỳ bình thường tiếp theo
-    tt.luotTiepTheo_LaXanh = (tt.nodeId == NodeID::NODE_A) ? true : false;
+    
+    Serial.printf("[SWITCH] Node %c chuyen pha. Luot toi se la: %s\n", 
+                  (tt.nodeId == NodeID::NODE_A ? 'A' : 'B'),
+                  (tt.luotTiepTheo_LaXanh ? "XANH" : "DO"));
 }
 
 

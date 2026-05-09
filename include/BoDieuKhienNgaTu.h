@@ -31,9 +31,13 @@ public:
         _nutThoiGianDebounce = 0;
         _nutDangNhan         = false;
         _ctx.trangThai = TrangThai::CHO_KHOI_DONG;
+
+        // ← THÊM: set đúng giá trị mặc định theo nodeId
+        _ctx.luotTiepTheo_LaXanh = (_ctx.nodeId == NodeID::NODE_A) ? true : false;
+
         _ctx.den->tat_tat_ca();
         _ctx.man->xoa();
-    }
+}
 
     // Gọi trước cap_nhat() — drain queue trước khi update state
     void nhan_lenh(const LenhNhan& lenh) {
@@ -150,9 +154,9 @@ private:
         // --- HANDSHAKE: Gửi "run" về Pi khi sắp hết 5 giây vàng ---
         if (!_ctx.daGuiRun && conLai_ms <= 5000) 
         { 
-            _ctx.uart->gui_ve_pi("run1");
+            _ctx.uart->gui_ve_pi("run");
             _ctx.daGuiRun = true;
-            Serial.printf("[SEND] [%lu ms] Gui 'run' ve Pi (DO_DEM) | Con %u giay\n",
+            Serial.printf("[SEND] [%lu ms] Gui 'run1' ve Pi (DO_DEM) | Con %u giay\n",
                           _ctx.hien_tai, ChuyenTrangThai::sang_giay(conLai_ms));
         }
         if (dt >= ThoiGian::VANG_DEM_HET_UU_TIEN) {

@@ -47,7 +47,7 @@ private:
     tt.che_do_moi  = mode;
     tt.co_lenh_moi = true;
 
-    bool dangDung = (
+    bool dangDung = (tt.trangThai == TrangThai::CHO_MODE_MOI||
                      tt.trangThai == TrangThai::CHO_KHOI_DONG
                     );
 
