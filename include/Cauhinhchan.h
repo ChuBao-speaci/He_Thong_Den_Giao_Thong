@@ -21,8 +21,8 @@ namespace Pin {
     constexpr uint8_t NODE_ID      = 25;
  
     // UART2 giao tiếp với Raspberry Pi
-    constexpr uint8_t UART_RX           = 27;
-    constexpr uint8_t UART_TX           = 26;
+    constexpr uint8_t UART_RX           = 26;
+    constexpr uint8_t UART_TX           = 27;
 }
  
 // ------------------------------------------------------------

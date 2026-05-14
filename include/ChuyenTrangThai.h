@@ -86,7 +86,8 @@ namespace ChuyenTrangThai {
         tt.trangThai      = TrangThai::VANG_DEM;
         tt.thoiDiemBatDau = tt.hien_tai;
         Serial.printf("[STATE] [%lu ms] VANG DEM - Sau XA KET | Thoi gian: 5 giay | Doi Pi gui mode moi\n", tt.hien_tai);
-        tt.co_lenh_moi    = false;   
+        tt.co_lenh_moi    = false;
+        tt.co_lenh_uu_tien = false;      
         tt.daGuiRun       = false;
         tt.den->bat_vang();
         tt.man->hien_thi_so((uint8_t)(ThoiGian::VANG_DEM_HET_UU_TIEN / 1000));
@@ -97,6 +98,7 @@ namespace ChuyenTrangThai {
         tt.thoiDiemBatDau = tt.hien_tai;
         Serial.printf("[STATE] [%lu ms] DO DEM - Sau XA KET | Thoi gian: 5 giay | Doi Pi gui mode moi\n", tt.hien_tai);
         tt.co_lenh_moi    = false;   
+        tt.co_lenh_uu_tien = false;   
         tt.daGuiRun       = false;
         tt.den->bat_do();
         tt.man->hien_thi_so((uint8_t)(ThoiGian::DO_DEM_HET_UU_TIEN / 1000));
@@ -134,6 +136,13 @@ inline void bat_dau_chu_ky(ThongTinHeThong& tt) {
 
 
     inline void sang_cho_mode_moi(ThongTinHeThong& tt) {
+    // Ưu tiên 1: có lệnh uu_tien đang chờ → kích hoạt luôn
+    if (tt.co_lenh_uu_tien) {
+    Serial.printf("[UU_TIEN] [%lu ms] Co lenh uu tien dang cho -> kich hoat\n", tt.hien_tai);
+    kich_hoat_uu_tien(tt);
+    return;
+    }
+
     // Kiểm tra buffer TRƯỚC — nếu đã có mode thì chạy luôn
     if (tt.co_lenh_moi) {
         tt.che_do_hien_tai = tt.che_do_moi;

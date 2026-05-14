@@ -70,30 +70,44 @@ private:
     //   Chỉ kích hoạt khi đang trong chu kỳ bình thường.
     // ----------------------------------------------------------
     void _case_uu_tien_bat(uint8_t nodeNhanLenh, ThongTinHeThong& tt) {
-        bool dangChay = (tt.trangThai == TrangThai::GREEN ||
-                         tt.trangThai == TrangThai::YELLOW ||
-                         tt.trangThai == TrangThai::RED);
+    bool dangChay = (tt.trangThai == TrangThai::GREEN  ||
+                     tt.trangThai == TrangThai::YELLOW ||
+                     tt.trangThai == TrangThai::RED);
+
+    bool dangDem  = (tt.trangThai == TrangThai::VANG_DEM ||
+                     tt.trangThai == TrangThai::DO_DEM);
+
+    bool laCuaMinh = _la_lenh_cua_minh(nodeNhanLenh, tt.nodeId);
+
+    if (laCuaMinh) {
+        tt.luotTiepTheo_LaXanh = false;
+        Serial.printf("[BUFFER] [%lu ms] BAT_UU_TIEN -> cho het pha vao XA_KET\n", tt.hien_tai);
+    } else {
+        tt.luotTiepTheo_LaXanh = true;
+        Serial.printf("[BUFFER] [%lu ms] BAT_UU_TIEN -> cho het pha vao EP_DO\n", tt.hien_tai);
+    }
+
+    if (dangDem) {
+        // Chặn lệnh cùng chiều: node vừa chiếm xanh không được xanh tiếp ngay
+        bool nodeVuaXanh = (tt.trangThai == TrangThai::VANG_DEM);
+        if (laCuaMinh && nodeVuaXanh) {
+            Serial.printf("[BLOCK] [%lu ms] Node vua xanh, khong the XA_KET lai ngay\n", tt.hien_tai);
+            return;
+        }
+        // Lệnh ngược chiều → buffer, kích hoạt sau khi hết đệm
         tt.co_lenh_uu_tien = true;
         tt.lenh_uu_tien    = nodeNhanLenh;
-        // --- ĐOẠN NÀY ĐÃ FIX LỖI CÚ PHÁP CỦA HUYNH ---
-        if (_la_lenh_cua_minh(nodeNhanLenh, tt.nodeId)) {
-            // Nếu đúng Node mình thì mới bật Xanh full
-            if (dangChay) {
-                Serial.printf("[LENH] [%lu ms] Nhan BAT_UU_TIEN -> Node %s BAT XA_KET\n",
-                              tt.hien_tai, (tt.nodeId == NodeID::NODE_A ? "A" : "B"));
-                tt.luotTiepTheo_LaXanh = false;
-                //ChuyenTrangThai::sang_xa_ket(tt);
-            }
-        } else {
-            // Nếu lệnh dành cho Node kia thì mình phải Ép Đỏ
-            if (dangChay) {
-                Serial.printf("[LENH] [%lu ms] Nhan BAT_UU_TIEN -> Node %s bi EP_DO\n",
-                              tt.hien_tai, (tt.nodeId == NodeID::NODE_A ? "A" : "B"));
-                tt.luotTiepTheo_LaXanh = true;
-                //ChuyenTrangThai::sang_ep_do(tt);
-            }
-        }
+        Serial.printf("[BUFFER] [%lu ms] Nhan lenh nguoc chieu trong DEM -> kich hoat sau\n", tt.hien_tai);
+        return;
     }
+
+    if (!dangChay) return;
+
+    // Đang chạy bình thường → buffer
+    tt.co_lenh_uu_tien = true;
+    tt.lenh_uu_tien    = nodeNhanLenh;
+
+}
 
     // ----------------------------------------------------------
     // case 'a' → dừng xả kẹt Node A (giaTri == 0)
