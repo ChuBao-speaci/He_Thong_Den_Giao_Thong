@@ -31,6 +31,7 @@ public:
         if (thoiGianTroi >= ThoiGian::GIOI_HAN_UU_TIEN) 
         {
             Serial.printf("[UU_TIEN_TIMEOUT] [%lu ms] Timeout 150s -> Sang VANG_DEM\n", tt.hien_tai);
+            tt.thoatDoTimeout = true;
             tt.daGuiRun = false;
             ChuyenTrangThai::sang_vang_dem(tt);    
         }

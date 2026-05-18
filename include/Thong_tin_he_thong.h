@@ -30,6 +30,8 @@ struct ThongTinHeThong {
     // --- Cờ và Định danh ---
     bool        daGuiRun       = false;
     NodeID      nodeId         = NodeID::NODE_A;
+    // --- Time Out red ---
+    bool thoatDoTimeout = false;
 
     // --- Hardware (con trỏ, khởi tạo trong MayTrangThai::khoi_dong) ---
     DenGiaoThong*    den  = nullptr;

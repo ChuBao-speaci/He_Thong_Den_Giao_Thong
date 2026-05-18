@@ -122,6 +122,7 @@ private:
         if (laNodeChinh && tt.trangThai == TrangThai::UU_TIEN) {
             Serial.printf("[LENH] [%lu ms] Nhan TAT_UU_TIEN -> Node %s TAT XA_KET, sang VANG_DEM\n",
                           tt.hien_tai, (tt.nodeId == NodeID::NODE_A ? "A" : "B"));
+            tt.thoatDoTimeout = false;
             tt.daGuiRun = false; 
             ChuyenTrangThai::sang_vang_dem(tt);
         } 
@@ -129,6 +130,7 @@ private:
             // Node đối diện đang bị ép đỏ -> Tiếp tục giữ Đỏ cho đến khi Pi gửi Mode mới
             Serial.printf("[LENH] [%lu ms] Nhan TAT_UU_TIEN (node kia) -> Sang CHO_MODE_MOI\n",
                           tt.hien_tai);
+            tt.thoatDoTimeout = false;
             tt.daGuiRun = false;
             ChuyenTrangThai::sang_do_dem(tt);
         }

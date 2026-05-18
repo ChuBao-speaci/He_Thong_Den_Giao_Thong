@@ -78,6 +78,7 @@ public:
             case TrangThai::EP_DO: 
             // Nếu thời gian ở trạng thái ÉP ĐỎ (dt) >= 150 giây (GIOI_HAN_UU_TIEN)
             if (dt >= ThoiGian::GIOI_HAN_UU_TIEN) {
+                _ctx.thoatDoTimeout = true;
                 Serial.printf("[TIMEOUT] Node kia xa ket qua lau (150s) -> Tu thoat EP_DO\n");
                 ChuyenTrangThai::sang_do_dem(_ctx); 
             }
@@ -134,13 +135,14 @@ private:
         
         // --- HANDSHAKE: Gửi "run" về Pi khi sắp hết 5 giây vàng ---
         if (!_ctx.daGuiRun && conLai_ms <= 5000) 
-        { 
-            _ctx.uart->gui_ve_pi("run");
-            _ctx.daGuiRun = true;
-            Serial.printf("[SEND] [%lu ms] Gui 'run' ve Pi (VANG_DEM) | Con %u giay\n",
-                          _ctx.hien_tai, ChuyenTrangThai::sang_giay(conLai_ms));
+            if (_ctx.thoatDoTimeout) {
+            _ctx.uart->gui_ve_pi("run1");  // tự thoát 150s
+            Serial.printf("[SEND] VANG_DEM: Gui 'run1' (timeout 150s)\n");
+        } else {
+            _ctx.uart->gui_ve_pi("run");   // nhận lệnh a/b
+            Serial.printf("[SEND] VANG_DEM: Gui 'run' (nhan lenh a/b)\n");
         }
-
+        _ctx.daGuiRun = true;
         if (dt >= ThoiGian::VANG_DEM_HET_UU_TIEN) {
             ChuyenTrangThai::sang_cho_mode_moi(_ctx); 
         }
@@ -159,12 +161,14 @@ private:
         
         // --- HANDSHAKE: Gửi "run" về Pi khi sắp hết 5 giây vàng ---
         if (!_ctx.daGuiRun && conLai_ms <= 5000) 
-        { 
-            _ctx.uart->gui_ve_pi("run");
-            _ctx.daGuiRun = true;
-            Serial.printf("[SEND] [%lu ms] Gui 'run' ve Pi (DO_DEM) | Con %u giay\n",
-                          _ctx.hien_tai, ChuyenTrangThai::sang_giay(conLai_ms));
+            if (_ctx.thoatDoTimeout) {
+            _ctx.uart->gui_ve_pi("run1");  // tự thoát 150s
+            Serial.printf("[SEND] DO_DEM: Gui 'run1' (timeout 150s)\n");
+        } else {
+            _ctx.uart->gui_ve_pi("run");   // nhận lệnh a/b
+            Serial.printf("[SEND] DO_DEM: Gui 'run' (nhan lenh a/b)\n");
         }
+        _ctx.daGuiRun = true;
         if (dt >= ThoiGian::VANG_DEM_HET_UU_TIEN) {
             ChuyenTrangThai::sang_cho_mode_moi(_ctx);
         }

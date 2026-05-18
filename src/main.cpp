@@ -100,7 +100,7 @@ void setup() {
     // 3. Khởi tạo phần cứng
     denGiaoThong.khoi_dong();
     led7Doan.khoi_dong();
-    boUART.khoi_dong(Serial);
+    boUART.khoi_dong(Serial2);
 
     // 4. Khởi tạo state machine
     boDieuKhien = new BoDieuKhienNgaTu(nodeId, denGiaoThong, led7Doan, boUART);
